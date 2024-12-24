@@ -1,4 +1,5 @@
 const express = require("express");
+const { adminAuth, userAuth } = require("./middlewares/auth");
 
 const app = express();
 
@@ -33,15 +34,27 @@ const app = express();
 //   res.send("Hello from the server-1"); // this function is known as request handler
 // });
 
-app.use(
-  "/user",
-  (req, res) => {
-    res.send("1st");
-  },
-  (req, res) => {
-    res.send("2nd");
-  }
-);
+// app.use(
+//   "/user",
+//   (req, res) => {
+//     res.send("1st");
+//   },
+//   (req, res) => {
+//     res.send("2nd");
+//   }
+// );
+
+app.use("/admin", adminAuth, (req, res) => {
+  console.log("Get All Data");
+});
+
+app.use("/user", userAuth, () => {
+  console.log("Get All user data");
+});
+
+app.use("/admin/getAll", (req, res) => {
+  res.send("all Data");
+});
 
 app.listen(3000, (req, res) => {
   console.log("Server is successfully listening on port 3000");
