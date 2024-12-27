@@ -1,61 +1,34 @@
 const express = require("express");
-const { adminAuth, userAuth } = require("./middlewares/auth");
-
+const connectDB = require("./config/database");
 const app = express();
+const User = require("./models/User");
 
-// app.use("/users", (req, res) => {
-//   res.send("Haahahha");
-// });
+app.post("/signup", async (req, res) => {
+  const userObj = {
+    firstName: "Sahil",
+    lastName: "Divekar",
+    emailId: "sahildivekar32@gmail.com",
+    password: "12345678",
+  };
 
-// app.get("/users/:id", (req, res) => {
-//   console.log(req.params);
+  //Creating a new instance of the user model
+  const user = new User(userObj);
 
-//   res.send("This will only match the get method");
-// });
-
-// app.post("/users", (req, res) => {
-//   res.send("Send data to the data base");
-// });
-
-// app.delete("/users", (req, res) => {
-//   res.send("User has been successfully deleted");
-// });
-
-//All the below routes will match all the HTTP method API calls
-// app.use("/", (req, res) => {
-//   res.send("Base Route");
-// });
-
-// app.use("/home", (req, res) => {
-//   res.send("Hello from home");
-// });
-
-// app.use("/test", (req, res) => {
-//   res.send("Hello from the server-1"); // this function is known as request handler
-// });
-
-// app.use(
-//   "/user",
-//   (req, res) => {
-//     res.send("1st");
-//   },
-//   (req, res) => {
-//     res.send("2nd");
-//   }
-// );
-
-app.use("/admin", adminAuth, (req, res) => {
-  console.log("Get All Data");
+  try {
+    await user.save();
+    res.send("User added successfully");
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
 });
 
-app.use("/user", userAuth, () => {
-  console.log("Get All user data");
-});
-
-app.use("/admin/getAll", (req, res) => {
-  res.send("all Data");
-});
-
-app.listen(3000, (req, res) => {
-  console.log("Server is successfully listening on port 3000");
-});
+connectDB()
+  .then(() => {
+    console.log("DB connected successfully");
+    app.listen(3000, (req, res) => {
+      console.log("Server is successfully listening on port 3000");
+    });
+  })
+  .catch(() => {
+    console.log("Database cannot be connected");
+  });
