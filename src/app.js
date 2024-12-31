@@ -18,6 +18,94 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+//Get User by email
+app.get("/user", async (req, res) => {
+  const userEmail = req.body.emailId;
+
+  try {
+    // const user = await User.find({ emailId: userEmail });
+    // if (user.length === 0) {
+    //   res.status(404).send("User not found");
+    // } else {
+    //   res.send(user);
+    // }
+
+    const user = await User.findOne({ emailId: userEmail });
+    if (!user) {
+      res.status(404).send("User not found");
+    } else {
+      res.send(user);
+    }
+  } catch (error) {
+    res.status(400).send("Cannot find the email");
+  }
+});
+
+//Feed API - GET /feed - get all the users from the database
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (error) {
+    res.status(400).send("Cannot find the email");
+  }
+});
+
+app.get("/userById", async (req, res) => {
+  const id = req.body.id;
+
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      res.send(user);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//delete an user from the database
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//update an user from the database
+app.patch("/user", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "before",
+    });
+    console.log(user);
+
+    res.send("User updated successfully");
+  } catch (error) {
+    res.status(400).send("Something Went Wrong!");
+  }
+});
+
+//update using email id
+app.patch("/userbyemailid", async (req, res) => {
+  const emailId = req.body.emailId;
+  const data = req.body;
+
+  try {
+    const user = await User.findOneAndUpdate({ emailId: emailId }, data);
+    res.send("User updated successfully");
+  } catch (error) {
+    res.status(400).send("Something Went Wrong!");
+  }
+});
+
 connectDB()
   .then(() => {
     console.log("DB connected successfully");
