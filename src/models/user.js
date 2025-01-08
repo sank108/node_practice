@@ -46,6 +46,11 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
+      // validate(value) {
+      //   const uniqueSet = new Set(value);
+      //   return uniqueSet.size === value.length;
+      // },
+      // message: "Skills must not be duplicate",
     },
   },
   {
